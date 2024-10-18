@@ -5,4 +5,5 @@ services:
     ports:
       - 5432:5432
     environment:
+      DATABASE_NAME: talentosos
       POSTGRES_PASSWORD: pg12345678
