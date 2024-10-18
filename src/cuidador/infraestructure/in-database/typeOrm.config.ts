@@ -8,7 +8,7 @@ export const dataSourceOptions: DataSourceOptions = {
   port: +process.env.DB_PORT,
   username: process.env.DB_USERNAME,
   password: String(process.env.DB_PASSWORD),
-  database: process.env.DB_NAME,
+  database: process.env.DB_DATABASE,
   logging: true,
   migrations: [__dirname + '/migrations/*.{ts,js}'],
   entities: [CuidadorEntity],
