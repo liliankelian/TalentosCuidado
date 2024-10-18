@@ -1,34 +1,23 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule, TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
+import { TypeOrmAlunoPersistenceModule } from './in-database/typeorm-persistence.module';
 
-@Module({
-    imports: [
-        ConfigModule.forRoot({ isGlobal: true }),
-        TypeOrmModule.forRootAsync({
-          imports: [ConfigModule],
-          inject: [ConfigService],
-          useFactory: (configService: ConfigService) => {
-            const IS_PRODUCTION = configService.get('NODE_ENV') === 'production';
-    
-            const config = {
-              type: 'postgres',
-              port: 5432,
-              host: configService.getOrThrow<string>('DB_HOST'),
-              username: configService.getOrThrow<string>('DB_USERNAME'),
-              password: configService.getOrThrow<string>('DB_PASSWORD'),
-              database: configService.getOrThrow<string>('DB_DATABASE'),
-              entities: [__dirname + '/../**/*.entity.{ts|js}'],
-              autoLoadEntities: true,
-              synchronize: IS_PRODUCTION ? false : true,
-              logger: IS_PRODUCTION ? 'error' : 'debug',
-            };
-    
-            return config as TypeOrmModuleAsyncOptions;
-          },
-        }),
-    ]
-})
+@Module({})
 export class CuidadorInfraestructureModule {
+    static use(driver: 'in-file' | 'in-memory' | 'in-database') {
+        let persistenceModule;
     
+        if (driver === 'in-database') {
+          persistenceModule = TypeOrmAlunoPersistenceModule;
+        } else if (driver === 'in-file' || driver === 'in-memory') {
+          throw new Error('Persistencia ainda nao implementada.')
+        } else {
+          throw new Error('Driver invalido.')
+        }
+        
+        return {
+          module: CuidadorInfraestructureModule,
+          imports: [persistenceModule],
+          exports: [persistenceModule],
+        };
+    }
 }

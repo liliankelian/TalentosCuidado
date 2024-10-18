@@ -1,7 +1,9 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { CuidadorService } from '../application/cuidador.service';
-import { CreateCuidadorDto } from '../application/dto/create-cuidador.dto';
-import { UpdateCuidadorDto } from '../application/dto/update-cuidador.dto';
+import { CreateCuidadorCommand } from '../application/commands/create-cuidador.command';
+import { UpdateCuidadorDto } from './dto/update-cuidador.dto';
+import { CreateCuidadorDto } from './dto/create-cuidador.dto';
+import { Cuidador } from '../domain/entities/cuidador.model';
 
 @Controller('cuidador')
 export class CuidadorController {
@@ -9,26 +11,34 @@ export class CuidadorController {
 
   @Post()
   create(@Body() createCuidadorDto: CreateCuidadorDto) {
-    return this.cuidadorService.create(createCuidadorDto);
+    const command = new CreateCuidadorCommand(
+      createCuidadorDto.nome,
+      createCuidadorDto.email,
+      createCuidadorDto.linkedin,
+      createCuidadorDto.telefone
+    )
+    console.log(command);
+
+    return this.cuidadorService.create(command);
   }
 
   @Get()
-  findAll() {
+  findAll(): Promise<Cuidador[]> {
     return this.cuidadorService.findAll();
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.cuidadorService.findOne(+id);
+    return this.cuidadorService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateCuidadorDto: UpdateCuidadorDto) {
-    return this.cuidadorService.update(+id, updateCuidadorDto);
+    return this.cuidadorService.update(id, updateCuidadorDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.cuidadorService.remove(+id);
+    return this.cuidadorService.remove(id);
   }
 }

@@ -1,17 +1,21 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ConfigService } from '@nestjs/config';
+import { ValidationPipe } from '@nestjs/common';
+
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-
-  const configService = app.get<ConfigService>(ConfigService);
-
-  const APP_PORT = configService.get<number>('PORT', 3000, { infer: true });
-
-  await app.listen(APP_PORT);
-
-  console.log('App rodando na porta: ' + APP_PORT);
-
+  const app = await NestFactory.create(
+    AppModule.register({
+      driver: 'in-database',
+    }),
+  );
+  app.useGlobalPipes(
+    new ValidationPipe({
+      forbidNonWhitelisted: false, // Retorna 404 se o payload não atender as regras do DTO
+      whitelist: true, // Remove campos que não estão no DTO
+      transform: true, // Transforma os campos para o tipo especificado no DTO
+    }),
+  );
+  await app.listen(3000);
 }
 bootstrap();

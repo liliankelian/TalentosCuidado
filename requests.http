@@ -3,3 +3,30 @@ GET http://localhost:3000
 
 ### Cuidador
 GET http://localhost:3000/cuidador
+
+### Criar um cuidador
+POST http://localhost:3000/cuidador
+Content-Type: application/json
+
+{
+     "nome":"Nome mais quero outro ",
+     "email":"teste@teste.com",
+     "linkedin":"linkedin.com",
+     "telefone":"11 1235"
+}
+
+### Cuidador por ID
+GET http://localhost:3000/cuidador/c99fd8c1-30f0-4193-bbce-da94ce57dadd
+
+### Alterar Cuidador 
+PATCH http://localhost:3000/cuidador/c99fd8c1-30f0-4193-bbce-da94ce57dadd
+Content-Type: application/json
+
+{
+    "email":"blabla@teste.com"
+}
+
+### Deletar Cuidador
+DELETE http://localhost:3000/cuidador/b1df1c74-5626-43c2-b45b-79f9394165ea
+
+

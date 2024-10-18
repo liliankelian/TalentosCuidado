@@ -1,26 +1,42 @@
 import { Injectable } from '@nestjs/common';
-import { CreateCuidadorDto } from './dto/create-cuidador.dto';
-import { UpdateCuidadorDto } from './dto/update-cuidador.dto';
+import { CreateCuidadorCommand} from './commands/create-cuidador.command';
+import { UpdateCuidadorCommand } from './commands/update-cuidador.command';
+import { CuidadorRepository } from './ports/cuidador.repository';
+import { CuidadorFactory } from '../domain/factories/cuidador.factory';
 
 @Injectable()
 export class CuidadorService {
-  create(createCuidadorDto: CreateCuidadorDto) {
-    return 'This action adds a new cuidador';
+  constructor(
+    private readonly cuidadorRepository: CuidadorRepository
+  ){}
+
+  async create(createCuidadorCommand: CreateCuidadorCommand) {
+    const cuidadorNew = new CuidadorFactory().criar(
+      createCuidadorCommand.nome,
+      createCuidadorCommand.email,
+      createCuidadorCommand.linkedin,
+      createCuidadorCommand.telefone
+    );
+
+    console.log(cuidadorNew);
+    
+    return this.cuidadorRepository.create(cuidadorNew);
   }
 
   findAll() {
-    return `This action returns all cuidador`;
+    return this.cuidadorRepository.findAll();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} cuidador`;
+  findOne(id: string) {
+    console.log(id);
+    return this.cuidadorRepository.findOne(id);
   }
 
-  update(id: number, updateCuidadorDto: UpdateCuidadorDto) {
-    return `This action updates a #${id} cuidador`;
+  update(id: string, updateCuidadorCommand: UpdateCuidadorCommand) {
+    return this.cuidadorRepository.update(id,updateCuidadorCommand);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} cuidador`;
+  remove(id: string) {
+    return this.cuidadorRepository.remove(id);
   }
 }
